@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+    container_name: multi_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"   # optional mapping for direct access
+    networks:
+      - appnet
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: multi_frontend
+    environment:
+      - BACKEND_URL=http://backend:5000/process
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
+    driver: bridge
